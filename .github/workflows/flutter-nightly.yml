@@ -3,10 +3,11 @@ name: Flutter Build
 on:
   push:
     branches:
-      - main
+      - main  # Alvo para pushes no branch principal
   pull_request:
     branches:
-      - main
+      - main  # Alvo para pull requests no branch principal
+  workflow_dispatch:  # Permite a execução manual do workflow
 
 jobs:
   build:
@@ -32,3 +33,4 @@ jobs:
       with:
         name: rustdesk-client-android-apk
         path: build/app/outputs/flutter-apk/app-release.apk
+
