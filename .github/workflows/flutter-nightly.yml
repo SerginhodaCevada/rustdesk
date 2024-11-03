@@ -26,7 +26,7 @@ jobs:
         flutter-version: "3.3.9"
 
     - name: Change directory to Flutter project
-      run: cd path/to/your/flutter/project  # Substitua pelo caminho correto
+      run: cd rustdesk  # Substitua 'rustdesk' pelo caminho correto se necessário
 
     - name: Upgrade dependencies
       run: flutter pub upgrade
