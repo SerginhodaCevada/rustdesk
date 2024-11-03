@@ -14,48 +14,6 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      # Instala as dependências necessárias no ambiente
-      - name: Install dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y \
-               clang \
-               cmake \
-               curl \
-               gcc-multilib \
-               git \
-               g++ \
-               g++-multilib \
-               libayatana-appindicator3-dev \
-               libasound2-dev \
-               libc6-dev \
-               libclang-10-dev \
-               libgstreamer1.0-dev \
-               libgstreamer-plugins-base1.0-dev \
-               libgtk-3-dev \
-               libpam0g-dev \
-               libpulse-dev \
-               libva-dev \
-               libvdpau-dev \
-               libxcb-randr0-dev \
-               libxcb-shape0-dev \
-               libxcb-xfixes0-dev \
-               libxdo-dev \
-               libxfixes-dev \
-               llvm-10-dev \
-               nasm \
-               ninja-build \
-               openjdk-11-jdk-headless \
-               pkg-config \
-               tree \
-               wget 
-
-      # Verifica a estrutura de diretórios após o checkout
-      - name: List project directory structure
-        run: |
-          echo "Listing root project directory:"
-          ls -R
-
       - name: Set up JDK
         uses: actions/setup-java@v1
         with:
@@ -69,16 +27,39 @@ jobs:
       - name: Check Flutter version
         run: flutter --version
 
-      - name: Install Flutter dependencies
-        run: |
-          cd rustdesk/flutter || { echo "Directory rustdesk/flutter not found"; exit 1; }
-          flutter pub get
+      - name: Check Dart version
+        run: dart --version
 
+      # Listar a estrutura do projeto para verificar o caminho correto
+      - name: List project directories
+        run: |
+          echo "Listing project directory structure:"
+          ls -R
+        continue-on-error: true  # Permitir que o processo continue mesmo que a listagem falhe
+
+      # Instalar dependências do Flutter
+      - name: Install dependencies
+        run: |
+          if [ -d "rustdesk/flutter" ]; then
+            cd rustdesk/flutter
+            flutter pub get
+          else
+            echo "Directory rustdesk/flutter not found"
+            exit 1
+          fi
+
+      # Compilar o APK
       - name: Build APK
         run: |
-          cd rustdesk/flutter || { echo "Directory rustdesk/flutter not found"; exit 1; }
-          flutter build apk --release
+          if [ -d "rustdesk/flutter" ]; then
+            cd rustdesk/flutter
+            flutter build apk --release
+          else
+            echo "Directory rustdesk/flutter not found"
+            exit 1
+          fi
 
+      # Upload do APK
       - name: Upload APK
         uses: actions/upload-artifact@v3
         with:
