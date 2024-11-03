@@ -41,7 +41,7 @@ jobs:
           flutter build apk --release
 
       - name: Upload APK
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3  # Atualizado para v3
         with:
           name: rustdesk-apk
           path: rustdesk/flutter/build/app/outputs/flutter-apk/app-release.apk
