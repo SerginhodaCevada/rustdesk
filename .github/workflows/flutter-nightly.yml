@@ -31,16 +31,18 @@ jobs:
         run: dart --version
 
       - name: List project directories
-        run: ls -R  # Para verificar a estrutura de diretórios
+        run: |
+          echo "Listing project directory structure:"
+          ls -R
 
       - name: Install dependencies
         run: |
-          cd rustdesk/flutter  # Certifique-se de que este caminho está correto
+          cd rustdesk/flutter || { echo "Directory rustdesk/flutter not found"; exit 1; }
           flutter pub get
 
       - name: Build APK
         run: |
-          cd rustdesk/flutter  # Certifique-se de que este caminho está correto
+          cd rustdesk/flutter || { echo "Directory rustdesk/flutter not found"; exit 1; }
           flutter build apk --release
 
       - name: Upload APK
