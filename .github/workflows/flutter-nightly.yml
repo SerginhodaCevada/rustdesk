@@ -30,14 +30,17 @@ jobs:
       - name: Check Dart version
         run: dart --version
 
+      - name: List project directories
+        run: ls -R  # Para verificar a estrutura de diretórios
+
       - name: Install dependencies
         run: |
-          cd rustdesk/flutter  # Verifique se esse caminho está correto
+          cd rustdesk/flutter  # Certifique-se de que este caminho está correto
           flutter pub get
 
       - name: Build APK
         run: |
-          cd rustdesk/flutter  # Verifique se esse caminho está correto
+          cd rustdesk/flutter  # Certifique-se de que este caminho está correto
           flutter build apk --release
 
       - name: Upload APK
