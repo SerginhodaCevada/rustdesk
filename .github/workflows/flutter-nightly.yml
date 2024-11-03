@@ -29,8 +29,7 @@ jobs:
       run: flutter build apk --release
 
     - name: Upload APK
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v3  # Atualizando para a versão 3
       with:
         name: rustdesk-client-android-apk
         path: build/app/outputs/flutter-apk/app-release.apk
-
