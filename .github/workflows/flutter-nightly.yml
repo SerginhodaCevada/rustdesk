@@ -26,22 +26,26 @@ jobs:
         flutter-version: "3.3.9"
 
     - name: Change directory to Flutter project
-      run: cd rustdesk  # Substitua 'rustdesk' pelo caminho correto se necessário
+      run: cd rustdesk/flutter  # Muda para o diretório correto
 
     - name: Upgrade dependencies
       run: flutter pub upgrade
+      working-directory: rustdesk/flutter  # Define o diretório de trabalho
 
     - name: Install dependencies
       run: flutter pub get
+      working-directory: rustdesk/flutter  # Define o diretório de trabalho
 
     - name: Check Flutter version
       run: flutter --version
+      working-directory: rustdesk/flutter  # Define o diretório de trabalho
 
     - name: Build APK
       run: flutter build apk --release
+      working-directory: rustdesk/flutter  # Define o diretório de trabalho
 
     - name: Upload APK
       uses: actions/upload-artifact@v3
       with:
         name: rustdesk-client-android-apk
-        path: build/app/outputs/flutter-apk/app-release.apk
+        path: rustdesk/flutter/build/app/outputs/flutter-apk/app-release.apk  # Caminho correto para o APK
