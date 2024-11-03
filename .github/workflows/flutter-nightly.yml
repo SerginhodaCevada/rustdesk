@@ -3,8 +3,8 @@ name: Flutter Build for Android
 on:
   push:
     branches:
-      - main  # ou a branch que você deseja monitorar
-  workflow_dispatch:  # permite que você execute o workflow manualmente
+      - main
+  workflow_dispatch:
 
 jobs:
   build:
@@ -22,7 +22,7 @@ jobs:
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: "3.7.12"  # Escolha uma versão do Flutter que suporte Dart SDK 3.1.0
+          flutter-version: "3.7.12"
 
       - name: Check Flutter version
         run: flutter --version
@@ -32,16 +32,16 @@ jobs:
 
       - name: Install dependencies
         run: |
-          cd rustdesk/flutter
+          cd rustdesk/flutter  # Verifique se esse caminho está correto
           flutter pub get
 
       - name: Build APK
         run: |
-          cd rustdesk/flutter
+          cd rustdesk/flutter  # Verifique se esse caminho está correto
           flutter build apk --release
 
       - name: Upload APK
-        uses: actions/upload-artifact@v3  # Atualizado para v3
+        uses: actions/upload-artifact@v3
         with:
           name: rustdesk-apk
           path: rustdesk/flutter/build/app/outputs/flutter-apk/app-release.apk
