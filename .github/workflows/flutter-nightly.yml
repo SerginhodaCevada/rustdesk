@@ -1,51 +1,47 @@
-name: Flutter Build
+name: Flutter Build for Android
 
 on:
   push:
     branches:
-      - main
-  pull_request:
-    branches:
-      - main
-  workflow_dispatch:
+      - main  # ou a branch que você deseja monitorar
+  workflow_dispatch:  # permite que você execute o workflow manualmente
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Check out repository
-      uses: actions/checkout@v3
+      - name: Checkout code
+        uses: actions/checkout@v2
 
-    - name: List directory contents
-      run: ls -R  # Lista todos os arquivos e diretórios
+      - name: Set up JDK
+        uses: actions/setup-java@v1
+        with:
+          java-version: '11'
 
-    - name: Verify network connection
-      run: curl -I https://flutter.dev
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: "3.7.12"  # Escolha uma versão do Flutter que suporte Dart SDK 3.1.0
 
-    - name: Set up Flutter
-      uses: subosito/flutter-action@v2
-      with:
-        flutter-version: "3.3.9"
+      - name: Check Flutter version
+        run: flutter --version
 
-    - name: Upgrade dependencies
-      run: flutter pub upgrade
-      working-directory: flutter  # Ajusta para o diretório correto
+      - name: Check Dart version
+        run: dart --version
 
-    - name: Install dependencies
-      run: flutter pub get
-      working-directory: flutter  # Ajusta para o diretório correto
+      - name: Install dependencies
+        run: |
+          cd rustdesk/flutter
+          flutter pub get
 
-    - name: Check Flutter version
-      run: flutter --version
-      working-directory: flutter  # Ajusta para o diretório correto
+      - name: Build APK
+        run: |
+          cd rustdesk/flutter
+          flutter build apk --release
 
-    - name: Build APK
-      run: flutter build apk --release
-      working-directory: flutter  # Ajusta para o diretório correto
-
-    - name: Upload APK
-      uses: actions/upload-artifact@v3
-      with:
-        name: rustdesk-client-android-apk
-        path: flutter/build/app/outputs/flutter-apk/app-release.apk  # Ajusta para o caminho correto
+      - name: Upload APK
+        uses: actions/upload-artifact@v2
+        with:
+          name: rustdesk-apk
+          path: rustdesk/flutter/build/app/outputs/flutter-apk/app-release.apk
