@@ -17,6 +17,9 @@ jobs:
     - name: Check out repository
       uses: actions/checkout@v3
 
+    - name: List directory contents
+      run: ls -R  # Lista todos os arquivos e diretórios
+
     - name: Verify network connection
       run: curl -I https://flutter.dev
 
@@ -25,27 +28,24 @@ jobs:
       with:
         flutter-version: "3.3.9"
 
-    - name: Change directory to Flutter project
-      run: cd rustdesk/flutter  # Muda para o diretório correto
-
     - name: Upgrade dependencies
       run: flutter pub upgrade
-      working-directory: rustdesk/flutter  # Define o diretório de trabalho
+      working-directory: flutter  # Ajusta para o diretório correto
 
     - name: Install dependencies
       run: flutter pub get
-      working-directory: rustdesk/flutter  # Define o diretório de trabalho
+      working-directory: flutter  # Ajusta para o diretório correto
 
     - name: Check Flutter version
       run: flutter --version
-      working-directory: rustdesk/flutter  # Define o diretório de trabalho
+      working-directory: flutter  # Ajusta para o diretório correto
 
     - name: Build APK
       run: flutter build apk --release
-      working-directory: rustdesk/flutter  # Define o diretório de trabalho
+      working-directory: flutter  # Ajusta para o diretório correto
 
     - name: Upload APK
       uses: actions/upload-artifact@v3
       with:
         name: rustdesk-client-android-apk
-        path: rustdesk/flutter/build/app/outputs/flutter-apk/app-release.apk  # Caminho correto para o APK
+        path: flutter/build/app/outputs/flutter-apk/app-release.apk  # Ajusta para o caminho correto
