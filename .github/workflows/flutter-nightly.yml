@@ -13,6 +13,8 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
+        with:
+          submodules: true  # Inclui submódulos, se houver
 
       - name: Set up JDK
         uses: actions/setup-java@v1
@@ -30,36 +32,28 @@ jobs:
       - name: Check Dart version
         run: dart --version
 
-      # Listar a estrutura do projeto para verificar o caminho correto
       - name: List project directories
         run: |
           echo "Listing project directory structure:"
           ls -R
-        continue-on-error: true  # Permitir que o processo continue mesmo que a listagem falhe
 
-      # Instalar dependências do Flutter
+      - name: Ensure flutter directory exists
+        run: |
+          if [ ! -d "rustdesk/flutter" ]; then
+            echo "Error: Directory rustdesk/flutter not found!"
+            exit 1
+          fi
+
       - name: Install dependencies
         run: |
-          if [ -d "rustdesk/flutter" ]; then
-            cd rustdesk/flutter
-            flutter pub get
-          else
-            echo "Directory rustdesk/flutter not found"
-            exit 1
-          fi
+          cd rustdesk/flutter
+          flutter pub get
 
-      # Compilar o APK
       - name: Build APK
         run: |
-          if [ -d "rustdesk/flutter" ]; then
-            cd rustdesk/flutter
-            flutter build apk --release
-          else
-            echo "Directory rustdesk/flutter not found"
-            exit 1
-          fi
+          cd rustdesk/flutter
+          flutter build apk --release
 
-      # Upload do APK
       - name: Upload APK
         uses: actions/upload-artifact@v3
         with:
