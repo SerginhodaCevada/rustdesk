@@ -56,5 +56,4 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: rustdesk-apk
-          path: |
-            flutter/build/app/outputs/flutter-apk/app-release.apk
+          path: flutter/build/app/outputs/flutter-apk/app-release.apk
