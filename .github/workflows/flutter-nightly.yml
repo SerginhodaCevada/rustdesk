@@ -40,14 +40,14 @@ jobs:
             exit 1
           fi
 
-      - name: Build APK with Debug Options
+      - name: Build APK with Verbose Logging
         run: |
           if [ -d "./flutter" ]; then
             cd flutter
-            flutter build apk --release --verbose --stacktrace
+            flutter build apk --release --verbose
           elif [ -d "rustdesk/flutter" ]; then
             cd rustdesk/flutter
-            flutter build apk --release --verbose --stacktrace
+            flutter build apk --release --verbose
           else
             echo "Directory flutter or rustdesk/flutter not found"
             exit 1
