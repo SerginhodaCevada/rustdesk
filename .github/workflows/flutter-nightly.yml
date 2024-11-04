@@ -30,43 +30,37 @@ jobs:
       - name: Check Dart version
         run: dart --version
 
-      # Instalar dependências do sistema separadamente
-      - name: Install system dependencies (part 1)
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y clang cmake gcc g++ curl git libssl-dev pkg-config
-
-      # Instalar GStreamer separadamente com --fix-missing para tentar resolver pacotes quebrados
-      - name: Install GStreamer dependencies
-        run: |
-          sudo apt-get install -y libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev || sudo apt-get -f install
-
-      # Listar a estrutura do projeto para verificar o caminho correto
+      # Listar a estrutura de diretórios do projeto para verificar o caminho correto
       - name: List project directories
         run: |
           echo "Listing project directory structure:"
           ls -R
-        continue-on-error: true  # Permitir que o processo continue mesmo que a listagem falhe
 
-      # Instalar dependências do Flutter
+      # Verificar o caminho e instalar dependências do Flutter
       - name: Install Flutter dependencies
         run: |
-          if [ -d "rustdesk/flutter" ]; then
+          if [ -d "./flutter" ]; then
+            cd flutter
+            flutter pub get
+          elif [ -d "rustdesk/flutter" ]; then
             cd rustdesk/flutter
             flutter pub get
           else
-            echo "Directory rustdesk/flutter not found"
+            echo "Directory flutter or rustdesk/flutter not found"
             exit 1
           fi
 
       # Compilar o APK
       - name: Build APK
         run: |
-          if [ -d "rustdesk/flutter" ]; then
+          if [ -d "./flutter" ]; then
+            cd flutter
+            flutter build apk --release
+          elif [ -d "rustdesk/flutter" ]; then
             cd rustdesk/flutter
             flutter build apk --release
           else
-            echo "Directory rustdesk/flutter not found"
+            echo "Directory flutter or rustdesk/flutter not found"
             exit 1
           fi
 
