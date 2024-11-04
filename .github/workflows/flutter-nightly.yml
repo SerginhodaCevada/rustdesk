@@ -74,7 +74,7 @@ jobs:
       - name: Install NDK
         uses: nttld/setup-ndk@v1
         with:
-          versionSpec: "23.1.7779620"  # Adiciona o parâmetro correto
+          ndk-version: "23.1.7779620"  # Corrigido para o parâmetro correto
           add-to-path: true
 
       - name: Install VCPKG
