@@ -7,8 +7,17 @@ on:
   workflow_dispatch:
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
+  build-rustdesk-android:
+    needs: [generate-bridge-linux]  # Dependência de outro job
+    name: Build RustDesk Android APK ${{ matrix.job.target }}
+    runs-on: ${{ matrix.job.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        job:
+          - { arch: aarch64, target: aarch64-linux-android, os: ubuntu-20.04, reltype: release, suffix: "" }
+          - { arch: armv7, target: armv7-linux-androideabi, os: ubuntu-20.04, reltype: release, suffix: "" }
+          - { arch: x86_64, target: x86_64-linux-android, os: ubuntu-20.04, reltype: release, suffix: "" }
 
     steps:
       - name: Checkout code
@@ -22,7 +31,7 @@ jobs:
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: "3.24.4" # ou 3.7.12 se necessário
+          flutter-version: "3.24.4"
 
       - name: Check Flutter version
         run: flutter --version
@@ -40,7 +49,18 @@ jobs:
             exit 1
           fi
 
-      - name: Build APK with Debug Logging
+      - name: Free Disk Space (Ubuntu)
+        uses: jlumbroso/free-disk-space@main
+        with:
+          tool-cache: false
+          android: false
+          dotnet: true
+          haskell: true
+          large-packages: false
+          docker-images: true
+          swap-storage: false
+
+      - name: Build APK
         run: |
           if [ -d "./flutter" ]; then
             cd flutter
@@ -50,7 +70,7 @@ jobs:
             echo "Directory flutter or rustdesk/flutter not found"
             exit 1
           fi
-          flutter build apk --release --verbose --no-tree-shake-icons --build-number=1 --stacktrace
+          flutter build apk --release --verbose --no-tree-shake-icons --build-number=1
 
       - name: Upload APK
         uses: actions/upload-artifact@v3
