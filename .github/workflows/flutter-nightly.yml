@@ -7,8 +7,36 @@ on:
   workflow_dispatch:
 
 jobs:
+  lint:
+    name: Lint Code
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: "3.24.4"
+
+      - name: Check Flutter version
+        run: flutter --version
+
+      - name: Install dependencies
+        run: |
+          if [ -d "./flutter" ]; then
+            cd flutter
+            flutter pub get
+          elif [ -d "rustdesk/flutter" ]; then
+            cd rustdesk/flutter
+            flutter pub get
+          else
+            echo "Directory flutter or rustdesk/flutter not found"
+            exit 1
+          fi
+
   build-rustdesk-android:
-    needs: [generate-bridge-linux]  # Dependência de outro job
+    needs: lint  # Este job depende do job lint
     name: Build RustDesk Android APK ${{ matrix.job.target }}
     runs-on: ${{ matrix.job.os }}
     strategy:
@@ -35,19 +63,6 @@ jobs:
 
       - name: Check Flutter version
         run: flutter --version
-
-      - name: Install dependencies
-        run: |
-          if [ -d "./flutter" ]; then
-            cd flutter
-            flutter pub get
-          elif [ -d "rustdesk/flutter" ]; then
-            cd rustdesk/flutter
-            flutter pub get
-          else
-            echo "Directory flutter or rustdesk/flutter not found"
-            exit 1
-          fi
 
       - name: Free Disk Space (Ubuntu)
         uses: jlumbroso/free-disk-space@main
