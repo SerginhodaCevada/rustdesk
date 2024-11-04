@@ -1,51 +1,15 @@
-name: Flutter Build for Android
+name: Build RustDesk APK for Android (aarch64)
 
 on:
   push:
     branches:
-      - main
+      - SerginhodaCevada-patch-1
   workflow_dispatch:
 
 jobs:
-  lint:
-    name: Lint Code
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-
-      - name: Set up Flutter
-        uses: subosito/flutter-action@v2
-        with:
-          flutter-version: "3.24.4"
-
-      - name: Check Flutter version
-        run: flutter --version
-
-      - name: Install dependencies
-        run: |
-          if [ -d "./flutter" ]; then
-            cd flutter
-            flutter pub get
-          elif [ -d "rustdesk/flutter" ]; then
-            cd rustdesk/flutter
-            flutter pub get
-          else
-            echo "Directory flutter or rustdesk/flutter not found"
-            exit 1
-          fi
-
   build-rustdesk-android:
-    needs: lint  # Este job depende do job lint
-    name: Build RustDesk Android APK ${{ matrix.job.target }}
-    runs-on: ${{ matrix.job.os }}
-    strategy:
-      fail-fast: false
-      matrix:
-        job:
-          - { arch: aarch64, target: aarch64-linux-android, os: ubuntu-20.04, reltype: release, suffix: "" }
-          - { arch: armv7, target: armv7-linux-androideabi, os: ubuntu-20.04, reltype: release, suffix: "" }
-          - { arch: x86_64, target: x86_64-linux-android, os: ubuntu-20.04, reltype: release, suffix: "" }
+    name: Build RustDesk Android APK for aarch64
+    runs-on: ubuntu-20.04
 
     steps:
       - name: Checkout code
@@ -64,27 +28,14 @@ jobs:
       - name: Check Flutter version
         run: flutter --version
 
-      - name: Free Disk Space (Ubuntu)
-        uses: jlumbroso/free-disk-space@main
-        with:
-          tool-cache: false
-          android: false
-          dotnet: true
-          haskell: true
-          large-packages: false
-          docker-images: true
-          swap-storage: false
-
-      - name: Build APK
+      - name: Install dependencies
         run: |
-          if [ -d "./flutter" ]; then
-            cd flutter
-          elif [ -d "rustdesk/flutter" ]; then
-            cd rustdesk/flutter
-          else
-            echo "Directory flutter or rustdesk/flutter not found"
-            exit 1
-          fi
+          cd rustdesk/flutter
+          flutter pub get
+
+      - name: Build APK with Debug Logging
+        run: |
+          cd rustdesk/flutter
           flutter build apk --release --verbose --no-tree-shake-icons --build-number=1
 
       - name: Upload APK
