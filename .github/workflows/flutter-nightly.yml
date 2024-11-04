@@ -51,15 +51,15 @@ jobs:
             exit 1
           fi
 
-      # Compilar o APK
+      # Compilar o APK com logs detalhados
       - name: Build APK
         run: |
           if [ -d "./flutter" ]; then
             cd flutter
-            flutter build apk --release
+            flutter build apk --release --verbose  # Adicionando --verbose para mais detalhes
           elif [ -d "rustdesk/flutter" ]; then
             cd rustdesk/flutter
-            flutter build apk --release
+            flutter build apk --release --verbose  # Adicionando --verbose para mais detalhes
           else
             echo "Directory flutter or rustdesk/flutter not found"
             exit 1
