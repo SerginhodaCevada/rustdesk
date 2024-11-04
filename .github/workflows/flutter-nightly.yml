@@ -1,40 +1,60 @@
-name: Build APK
+name: Flutter Build for Android
 
 on:
   push:
     branches:
-      - main # Ou qualquer outra branch que você deseja monitorar
-  pull_request:
+      - main
+  workflow_dispatch:
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v2
+      - name: Checkout code
+        uses: actions/checkout@v2
 
-    - name: Set up JDK
-      uses: actions/setup-java@v2
-      with:
-        java-version: '11' # Use a versão do JDK que você precisa
+      - name: Set up JDK
+        uses: actions/setup-java@v1
+        with:
+          java-version: '11'
 
-    - name: Set up Flutter
-      uses: subosito/flutter-action@v2
-      with:
-        flutter-version: '3.24.4' # Especifique a versão do Flutter que você está usando
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: "3.24.4"
 
-    - name: Install dependencies
-      run: flutter pub get
+      - name: Check Flutter version
+        run: flutter --version
 
-    - name: Build APK
-      run: |
-        if [ -d "./flutter" ]; then
-          cd flutter
-        elif [ -d "rustdesk/flutter" ]; then
-          cd rustdesk/flutter
-        else
-          echo "Directory flutter or rustdesk/flutter not found"
-          exit 1
-        fi
-        flutter build apk --release --verbose --no-tree-shake-icons --warning-mode all
+      - name: Install dependencies
+        run: |
+          if [ -d "./flutter" ]; then
+            cd flutter
+            flutter pub get
+          elif [ -d "rustdesk/flutter" ]; then
+            cd rustdesk/flutter
+            flutter pub get
+          else
+            echo "Directory flutter or rustdesk/flutter not found"
+            exit 1
+          fi
+
+      - name: Build APK with Debug Logging
+        run: |
+          if [ -d "./flutter" ]; then
+            cd flutter
+          elif [ -d "rustdesk/flutter" ]; then
+            cd rustdesk/flutter
+          else
+            echo "Directory flutter or rustdesk/flutter not found"
+            exit 1
+          fi
+          flutter build apk --release --verbose --no-tree-shake-icons --build-number=1
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v3
+        with:
+          name: rustdesk-apk
+          path: |
+            flutter/build/app/outputs/flutter-apk/app-release.apk
