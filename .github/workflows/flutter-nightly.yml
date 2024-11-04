@@ -22,22 +22,11 @@ jobs:
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: "3.24.4"  # Versão do Flutter atualizada
+          flutter-version: "3.24.4"
 
       - name: Check Flutter version
         run: flutter --version
 
-      - name: Check Dart version
-        run: dart --version
-
-      # Listar a estrutura do projeto para verificar o caminho correto
-      - name: List project directories
-        run: |
-          echo "Listing project directory structure:"
-          ls -R
-        continue-on-error: true
-
-      # Instalar dependências do Flutter
       - name: Install dependencies
         run: |
           if [ -d "./flutter" ]; then
@@ -51,21 +40,19 @@ jobs:
             exit 1
           fi
 
-      # Compilar o APK com logs detalhados
-      - name: Build APK
+      - name: Build APK with Debug Options
         run: |
           if [ -d "./flutter" ]; then
             cd flutter
-            flutter build apk --release --verbose  # Adicionando --verbose para mais detalhes
+            flutter build apk --release --verbose --stacktrace
           elif [ -d "rustdesk/flutter" ]; then
             cd rustdesk/flutter
-            flutter build apk --release --verbose  # Adicionando --verbose para mais detalhes
+            flutter build apk --release --verbose --stacktrace
           else
             echo "Directory flutter or rustdesk/flutter not found"
             exit 1
           fi
 
-      # Upload do APK
       - name: Upload APK
         uses: actions/upload-artifact@v3
         with:
