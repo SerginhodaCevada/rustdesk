@@ -22,7 +22,7 @@ jobs:
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: "3.7.12"
+          flutter-version: "3.13.0"  # Atualizado para Flutter 3.13
 
       - name: Check Flutter version
         run: flutter --version
@@ -30,13 +30,13 @@ jobs:
       - name: Check Dart version
         run: dart --version
 
-      # Listar a estrutura de diretórios do projeto para verificar o caminho correto
+      # Listar a estrutura do projeto para verificar o caminho correto
       - name: List project directories
         run: |
           echo "Listing project directory structure:"
           ls -R
 
-      # Verificar o caminho e instalar dependências do Flutter
+      # Instalar dependências do Flutter
       - name: Install Flutter dependencies
         run: |
           if [ -d "./flutter" ]; then
