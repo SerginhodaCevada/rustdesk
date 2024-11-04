@@ -23,6 +23,13 @@ jobs:
           docker-images: true
           swap-storage: false
 
+      - name: Export GitHub Actions cache environment variables
+        uses: actions/github-script@v6
+        with:
+          script: |
+            core.exportVariable('ACTIONS_CACHE_URL', process.env.ACTIONS_CACHE_URL || '');
+            core.exportVariable('ACTIONS_RUNTIME_TOKEN', process.env.ACTIONS_RUNTIME_TOKEN || '');
+
       - name: Checkout source code
         uses: actions/checkout@v4
 
@@ -74,8 +81,10 @@ jobs:
       - name: Install NDK
         uses: nttld/setup-ndk@v1
         with:
-          ndk-version: "23.1.7779620"  # Corrigido para o parâmetro correto
+          ndk-version: "android-ndk-r23c"  # Especificando a versão do NDK
           add-to-path: true
+          link-to-sdk: false
+          local-cache: false
 
       - name: Install VCPKG
         uses: lukka/run-vcpkg@v11
@@ -154,4 +163,5 @@ jobs:
           keyStorePassword: ${{ secrets.ANDROID_KEY_STORE_PASSWORD }}
           keyPassword: ${{ secrets.ANDROID_KEY_PASSWORD }}
         env:
+          # override default build-tools version (29.0.3) -- optional
           BUILD_TOOLS_VERSION: "30.0.2"
